@@ -23,6 +23,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	"destination" : attributes.queryParams.destination
 }]]]></http:query-params>
 		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="122cb9d3-69c2-409e-ad55-238132125d1b" message="output from Target System-----------#[payload]"/>
 		<ee:transform doc:name="Transform Message" doc:id="8dec1ebb-c9f8-4264-84b8-5865f0afd48a" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
