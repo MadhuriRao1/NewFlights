@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b5734b5b-8b34-4099-8ca9-ed0baac78e0f" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="f28e5d38-9944-48b0-9ada-8b38e9853e11" >
+		<http:request-connection host="shivaflights.us-e2.cloudhub.io" port="80" />
+	</http:request-config>
+	<flow name="newflightsFlow" doc:id="793a1646-a338-486f-915e-502eace27e4c" >
+		<http:listener doc:name="Listener" doc:id="f358ad7d-8e57-4d14-a3bf-0749e7c96ed8" config-ref="HTTP_Listener_config" path="/NewFlights"/>
+		<logger level="INFO" doc:name="Logger" doc:id="607aa956-acd7-4f1e-8178-ec1620c625e8" message="Request sent to Target system-----------#[attributes.queryParams]"/>
+		<http:request method="GET" doc:name="Request" doc:id="93de19a4-2e99-4c13-be5f-54106b132f2f" config-ref="HTTP_Request_configuration" path="/api/ShivaFlights">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"source" : attributes.queryParams.source,
+	"doj" : attributes.queryParams.doj,
+	"destination" : attributes.queryParams.destination
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="8dec1ebb-c9f8-4264-84b8-5865f0afd48a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="a7d1b8f5-5e37-494d-9486-ca3c05c9a61d" message="Final Output--------------#[payload]"/>
+	</flow>
+</mule>
