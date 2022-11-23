@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b5734b5b-8b34-4099-8ca9-ed0baac78e0f" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
 	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="f28e5d38-9944-48b0-9ada-8b38e9853e11" >
-		<http:request-connection host="shivaflights.us-e2.cloudhub.io" port="80" />
+		<http:request-connection host="${secure::NF.host}" port="${NF.port}" />
 	</http:request-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="256ea69b-bfc0-4584-b6ad-2156fd1cb27a" file="NewFlights-Dev.properties" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="a2ba45dc-ebb8-4434-bd35-50a9793cce76" file="NewFlights-Dev.properties" key="abcdefghijklmnop" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
 	<flow name="newflightsFlow" doc:id="793a1646-a338-486f-915e-502eace27e4c" >
 		<http:listener doc:name="Listener" doc:id="f358ad7d-8e57-4d14-a3bf-0749e7c96ed8" config-ref="HTTP_Listener_config" path="/NewFlights"/>
 		<logger level="INFO" doc:name="Logger" doc:id="607aa956-acd7-4f1e-8178-ec1620c625e8" message="Request sent to Target system-----------#[attributes.queryParams]"/>
